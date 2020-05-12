@@ -343,14 +343,12 @@ class CollectionTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             verifyPageContent(firstWebPage.content)
-        }.openThreeDotMenu {
-            clickBrowserViewSaveCollectionButton()
+        }.openHomeScreen {
+            clickSaveCollectionButton()
             if (!firstCollection)
                 clickAddNewCollection()
+            typeCollectionName(firstCollectionName)
 
-        }.typeCollectionName(collectionName) {
-            verifySnackBarText("Tab saved!")
-        }.openHomeScreen {
             mDevice.wait(
                 Until.findObject(By.text(collectionName)),
                 TestAssetHelper.waitingTime

@@ -752,7 +752,7 @@ private fun collectionThreeDotButton() =
     onView(allOf(withId(R.id.collection_overflow_button)))
 
 private fun collectionNameTextField() =
-    onView(allOf(ViewMatchers.withResourceName("name_collection_edittext")))
+    onView(withId(R.id.name_collection_edittext))
 
 private fun collectionTitle(title: String) =
     onView(allOf(withId(R.id.collection_title), withText(title)))
