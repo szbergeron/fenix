@@ -6,6 +6,7 @@ package org.mozilla.fenix.ui
 
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
@@ -355,6 +356,8 @@ class CollectionTest {
         }.openHomeScreen {
             clickSaveCollectionButton()
             submitDefaultCollectionName()
+            getInstrumentation().waitForIdleSync()
+            verifyCollectionIsDisplayed(defaultCollectionName)
         }
     }
 }

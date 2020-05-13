@@ -173,7 +173,7 @@ class HomeScreenRobot {
     fun saveTabsSelectedForCollection() = onView(withId(R.id.save_button)).click()
 
     fun verifyCollectionIsDisplayed(title: String) {
-        mDevice.wait(findObject(text(title)), waitingTime)
+        mDevice.waitNotNull(findObject(text(title)), waitingTime)
         collectionTitle(title).check(matches(isDisplayed()))
     }
 
