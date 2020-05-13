@@ -327,24 +327,24 @@ class CollectionTest {
         }
     }
 
-    private fun createCollection(name: String, firstCollection: Boolean = true) {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            waitForPageLoad()
-        }.openHomeScreen {
-            clickSaveCollectionButton()
-            if (!firstCollection)
-                clickAddNewCollection()
-            typeCollectionName(newCollectionName)
-
-            mDevice.wait(
-                Until.findObject(By.text(name)),
-                TestAssetHelper.waitingTime
-            )
-        }
-    }
+//    private fun createCollection(name: String, firstCollection: Boolean = true) {
+//        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+//
+//        navigationToolbar {
+//        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+//            waitForPageLoad()
+//        }.openHomeScreen {
+//            clickSaveCollectionButton()
+//            if (!firstCollection)
+//                clickAddNewCollection()
+//            typeCollectionName(newCollectionName)
+//
+//            mDevice.wait(
+//                Until.findObject(By.text(name)),
+//                TestAssetHelper.waitingTime
+//            )
+//        }
+//    }
 
     private fun createCollection1() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
