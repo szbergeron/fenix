@@ -94,7 +94,7 @@ class CollectionTest {
             closeTab()
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {
-            verifyPageContent(secondWebPage.content)
+            waitForPageLoad()
         }.openThreeDotMenu {
             clickBrowserViewSaveCollectionButton()
         }.selectExistingCollection(firstCollectionName) {
@@ -342,7 +342,7 @@ class CollectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            verifyPageContent(firstWebPage.content)
+            waitForPageLoad()
         }.openHomeScreen {
             clickSaveCollectionButton()
             if (!firstCollection)

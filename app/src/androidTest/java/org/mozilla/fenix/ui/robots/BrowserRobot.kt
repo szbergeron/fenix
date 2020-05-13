@@ -82,6 +82,9 @@ class BrowserRobot {
         mDevice.waitNotNull(Until.findObject(text(expectedText)), waitingTime)
     }
 
+    fun waitForPageLoad() =
+        mDevice.waitNotNull(Until.gone(By.res("org.mozilla.fenix.debug:id/mozac_browser_toolbar_progress")))
+
     fun verifyTabCounter(expectedText: String) {
         onView(withId(R.id.counter_text))
             .check((matches(withText(containsString(expectedText)))))
