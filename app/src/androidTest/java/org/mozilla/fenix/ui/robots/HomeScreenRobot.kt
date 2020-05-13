@@ -164,6 +164,12 @@ class HomeScreenRobot {
         mDevice.waitNotNull(Until.gone(text("Name collection")))
     }
 
+    fun submitDefaultCollectionName() {
+        mDevice.wait(findObject(By.res("org.mozilla.fenix.debug:id/name_collection_edittext")), waitingTime)
+        collectionNameTextField().perform(ViewActions.pressImeActionButton())
+        mDevice.waitNotNull(Until.gone(By.res("org.mozilla.fenix.debug:id/createCollectionWrapper")))
+    }
+
     fun saveTabsSelectedForCollection() = onView(withId(R.id.save_button)).click()
 
     fun verifyCollectionIsDisplayed(title: String) {

@@ -12,7 +12,6 @@ import androidx.test.uiautomator.Until
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -20,6 +19,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+
 
 /**
  *  Tests for verifying basic functionality of tab collection
@@ -31,8 +31,8 @@ class CollectionTest {
 
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
-    private val firstCollectionName = "testcollection_1"
-    private val secondCollectionName = "testcollection_2"
+    private val defaultCollectionName = "Collection 1"
+    private val newCollectionName = "testcollection"
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
@@ -73,21 +73,21 @@ class CollectionTest {
             saveTabsSelectedForCollection()
             verifyNameCollectionView()
             verifyDefaultCollectionName("Collection 1")
-            typeCollectionName(firstCollectionName)
+            typeCollectionName(newCollectionName)
             verifySnackBarText("Tabs saved!")
             verifyExistingOpenTabs(firstWebPage.title)
             verifyExistingOpenTabs(secondWebPage.title)
+            verifyCollectionIsDisplayed(newCollectionName)
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
-    // open a webpage, and add currently opened tab to existing collection
+    // open a webpage, and add currently to an existing collection
     fun addTabToExistingCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
             verifyExistingTabList()
@@ -97,29 +97,28 @@ class CollectionTest {
             waitForPageLoad()
         }.openThreeDotMenu {
             clickBrowserViewSaveCollectionButton()
-        }.selectExistingCollection(firstCollectionName) {
+        }.selectExistingCollection(defaultCollectionName) {
             verifySnackBarText("Tab saved!")
         }.openHomeScreen {
             verifyExistingTabList()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             verifyItemInCollectionExists(firstWebPage.title)
             verifyItemInCollectionExists(secondWebPage.title)
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun collectionMenuAddTabButtonTest() {
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
             closeTab()
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {
         }.openHomeScreen {
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             clickCollectionThreeDotButton()
             selectAddTabToCollection()
             verifyTabsSelectedCounterText(1)
@@ -129,30 +128,28 @@ class CollectionTest {
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun collectionMenuOpenAllTabsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
             closeTab()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             clickCollectionThreeDotButton()
             selectOpenTabs()
             verifyExistingOpenTabs(firstWebPage.title)
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun renameCollectionTest() {
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
             // On homeview, tap the 3-dot button to expand, select rename, rename collection
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             clickCollectionThreeDotButton()
             selectRenameCollection()
             typeCollectionName("renamed_collection")
@@ -160,13 +157,12 @@ class CollectionTest {
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun deleteCollectionTest() {
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             clickCollectionThreeDotButton()
             selectDeleteCollection()
             confirmDeleteCollection()
@@ -174,41 +170,39 @@ class CollectionTest {
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun createCollectionFromTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        createCollection(firstCollectionName)
+        createCollection1()
         homeScreen {
             // swipe to bottom until the collections are shown
             verifyExistingOpenTabs(firstWebPage.title)
             try {
-                verifyCollectionIsDisplayed(firstCollectionName)
+                verifyCollectionIsDisplayed(defaultCollectionName)
             } catch (e: NoMatchingViewException) {
-                scrollToElementByText(firstCollectionName)
+                scrollToElementByText(defaultCollectionName)
             }
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun verifyExpandedCollectionItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        createCollection(firstCollectionName)
+        createCollection1()
 
         homeScreen {
-            verifyCollectionIsDisplayed(firstCollectionName)
+            verifyCollectionIsDisplayed(defaultCollectionName)
             verifyCollectionIcon()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             verifyItemInCollectionExists(firstWebPage.title)
             verifyCollectionItemLogo()
             verifyCollectionItemUrl()
             verifyShareCollectionButtonIsVisible(true)
             verifyCollectionMenuIsVisible(true)
             verifyCollectionItemRemoveButtonIsVisible(firstWebPage.title, true)
-            collapseCollection(firstCollectionName)
+            collapseCollection(defaultCollectionName)
             verifyItemInCollectionExists(firstWebPage.title, false)
             verifyShareCollectionButtonIsVisible(false)
             verifyCollectionMenuIsVisible(false)
@@ -216,42 +210,40 @@ class CollectionTest {
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun shareCollectionTest() {
-        createCollection(firstCollectionName)
+        createCollection1()
         homeScreen {
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             clickShareCollectionButton()
             verifyShareTabsOverlay()
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun removeTabFromCollectionTest() {
         val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        createCollection(firstCollectionName)
+        createCollection1()
         homeScreen {
             closeTab()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             removeTabFromCollection(webPage.title)
             verifyItemInCollectionExists(webPage.title, false)
         }
 
-        createCollection(firstCollectionName)
+        createCollection1()
         homeScreen {
             closeTab()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             swipeCollectionItemLeft(webPage.title)
             verifyItemInCollectionExists(webPage.title, false)
         }
 
-        createCollection(firstCollectionName)
+        createCollection1()
         homeScreen {
             closeTab()
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             swipeCollectionItemRight(webPage.title)
             verifyItemInCollectionExists(webPage.title, false)
         }
@@ -274,17 +266,16 @@ class CollectionTest {
             selectTabForCollection(secondWebPage.title)
             verifyTabsSelectedCounterText(2)
             saveTabsSelectedForCollection()
-            typeCollectionName(firstCollectionName)
+            submitDefaultCollectionName()
             verifySnackBarText("Tabs saved!")
             closeTabViaXButton(firstWebPage.title)
             closeTabViaXButton(secondWebPage.title)
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             verifyItemInCollectionExists(firstWebPage.title)
             verifyItemInCollectionExists(secondWebPage.title)
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun tabsOverflowMenuSaveCollectionTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -304,21 +295,20 @@ class CollectionTest {
             selectAllTabsForCollection()
             verifyTabsSelectedCounterText(2)
             saveTabsSelectedForCollection()
-            typeCollectionName(firstCollectionName)
+            submitDefaultCollectionName()
             closeTabViaXButton(firstWebPage.title)
             closeTabViaXButton(secondWebPage.title)
-            expandCollection(firstCollectionName)
+            expandCollection(defaultCollectionName)
             verifyItemInCollectionExists(firstWebPage.title)
             verifyItemInCollectionExists(secondWebPage.title)
         }
     }
 
-    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/10587")
     @Test
     fun navigateBackInCollectionFlowTest() {
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
-        createCollection(firstCollectionName)
+        createCollection1()
         navigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {
         }.openHomeScreen {
@@ -337,7 +327,7 @@ class CollectionTest {
         }
     }
 
-    private fun createCollection(collectionName: String, firstCollection: Boolean = true) {
+    private fun createCollection(name: String, firstCollection: Boolean = true) {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -347,12 +337,24 @@ class CollectionTest {
             clickSaveCollectionButton()
             if (!firstCollection)
                 clickAddNewCollection()
-            typeCollectionName(firstCollectionName)
+            typeCollectionName(newCollectionName)
 
             mDevice.wait(
-                Until.findObject(By.text(collectionName)),
+                Until.findObject(By.text(name)),
                 TestAssetHelper.waitingTime
             )
+        }
+    }
+
+    private fun createCollection1() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            waitForPageLoad()
+        }.openHomeScreen {
+            clickSaveCollectionButton()
+            submitDefaultCollectionName()
         }
     }
 }
