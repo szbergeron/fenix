@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_browser.*
 import kotlinx.android.synthetic.main.fragment_browser.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.session.Session
@@ -67,11 +68,19 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         return view
     }
 
+    @Suppress("LongMethod")
     override fun initializeUI(view: View): Session? {
         val context = requireContext()
         val components = context.components
 
         return super.initializeUI(view)?.also {
+            ToolbarGestureHandler(
+                activity = requireActivity(),
+                container = gestureLayout,
+                toolbarLayout = browserToolbarView.view,
+                sessionManager = components.core.sessionManager
+            ).setup()
+
             val readerModeAction =
                 BrowserToolbar.ToggleButton(
                     image = ContextCompat.getDrawable(requireContext(), R.drawable.ic_readermode)!!,
